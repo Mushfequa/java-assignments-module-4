@@ -1,0 +1,45 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="java.sql.*" %>
+    <%@ include file="dbConnection.jsp" %>
+    
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/yourdb", "username", "password");
+%>
+<%
+    if (request.getParameter("submit") != null) {
+        String fname = request.getParameter("fname");
+        String lname = request.getParameter("lname");
+        String email = request.getParameter("email");
+        String mobile = request.getParameter("mobile");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password");
+
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO students(fname, lname, email, mobile, gender, password) VALUES (?, ?, ?, ?, ?, ?)");
+        ps.setString(1, fname);
+        ps.setString(2, lname);
+        ps.setString(3, email);
+        ps.setString(4, mobile);
+        ps.setString(5, gender);
+        ps.setString(6, password);
+        ps.executeUpdate();
+
+        response.sendRedirect("list.jsp");
+    }
+%>
+
+<form method="post">
+    <!-- Form fields for fname, lname, email, etc., with input validation as in your requirements -->
+    <input type="submit" name="submit" value="Add Student">
+</form>
+</body>
+</html>

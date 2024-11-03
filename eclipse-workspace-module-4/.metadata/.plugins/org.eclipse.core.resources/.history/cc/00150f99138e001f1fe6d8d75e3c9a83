@@ -1,0 +1,68 @@
+package com;
+
+import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.util.Properties;
+import java.util.Random;
+
+import com.mysql.cj.protocol.Message;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
+
+public class RegisterServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        // other form fields...
+
+        // Insert user into the database...
+        
+        // Generate OTP
+        String otp = String.valueOf(new Random().nextInt(999999));
+
+        // Store OTP in the session or database for verification later
+        HttpSession session = request.getSession();
+        session.setAttribute("otp", otp);
+        session.setAttribute("email", email);
+
+        // Send OTP to user's email
+        sendOtpEmail(email, otp);
+
+        response.sendRedirect("otpVerification.jsp");
+    }
+
+    private void sendOtpEmail(String email, String otp) {
+        String from = "your-email@example.com";
+        String password = "your-email-password";
+        String subject = "OTP for Account Verification";
+        String message = "Your OTP is: " + otp;
+
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.example.com");
+        props.put("mail.smtp.auth", "true");
+
+        Session session = Session.getDefaultInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        });
+
+        try {
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setText(message);
+
+            Transport.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+}

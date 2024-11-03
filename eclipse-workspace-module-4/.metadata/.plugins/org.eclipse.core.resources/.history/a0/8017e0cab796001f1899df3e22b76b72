@@ -1,0 +1,21 @@
+package com;
+
+public class ShowStudentServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Student> students = new ArrayList<>();
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/yourdb", "user", "password");
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM students");
+
+            while (rs.next()) {
+                students.add(new Student(rs.getInt("id"), rs.getString("fname"), rs.getString("lname"), rs.getString("email"), rs.getString("mobile"), rs.getString("gender"), rs.getString("password")));
+            }
+            request.setAttribute("students", students);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
+            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

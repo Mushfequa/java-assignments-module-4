@@ -1,0 +1,100 @@
+package com;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import Util.DatabaseUtil;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/StudentServlet")
+
+public class StudentServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("add".equals(action)) {
+            addStudent(request, response);
+        } else if ("edit".equals(action)) {
+            editStudent(request, response);
+        } else if ("delete".equals(action)) {
+            deleteStudent(request, response);
+        }
+    }
+
+    private void addStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String fname = request.getParameter("fname");
+        String lname = request.getParameter("lname");
+        String email = request.getParameter("email");
+        String contact = request.getParameter("contact");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseUtil.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO students (fname, lname, email, mobile, gender, password) VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setString(1, fname);
+            ps.setString(2, lname);
+            ps.setString(3, email);
+            ps.setString(4, contact);
+            ps.setString(5, gender);
+            ps.setString(6, password);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("show.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void editStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String fname = request.getParameter("fname");
+        String lname = request.getParameter("lname");
+        String email = request.getParameter("email");
+        String contact = request.getParameter("contact");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseUtil.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE students SET fname=?, lname=?, email=?, mobile=?, gender=?, password=? WHERE id=?");
+            ps.setString(1, fname);
+            ps.setString(2, lname);
+            ps.setString(3, email);
+            ps.setString(4, contact);
+            ps.setString(5, gender);
+            ps.setString(6, password);
+            ps.setInt(7, id);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("show.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        try {
+            Connection con = DatabaseUtil.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO deleted_data SELECT * FROM students WHERE id=?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+
+            ps = con.prepareStatement("DELETE FROM students WHERE id=?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("show.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

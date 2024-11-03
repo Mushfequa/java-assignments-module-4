@@ -1,0 +1,42 @@
+package com;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class OtpVerificationServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        String email = request.getParameter("email");
+        int otp = Integer.parseInt(request.getParameter("otp"));
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("SELECT otp FROM users WHERE email=? AND verified=false");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next() && rs.getInt("otp") == otp) {
+                ps = con.prepareStatement("UPDATE users SET verified=true WHERE email=?");
+                ps.setString(1, email);
+                ps.executeUpdate();
+
+                out.write("{\"message\": \"OTP verified. You can now login.\"}");
+            } else {
+                out.write("{\"message\": \"Invalid OTP or account already verified.\"}");
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

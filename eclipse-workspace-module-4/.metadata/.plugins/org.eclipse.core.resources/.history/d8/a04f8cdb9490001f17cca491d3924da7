@@ -1,0 +1,45 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page session="false" %>
+    
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+    HttpSession session = request.getSession(false);
+    if (session == null || session.getAttribute("isLoggedIn") == null) {
+        response.sendRedirect("login.jsp");
+    }
+%>
+
+<h2>Messages</h2>
+<%
+    String userEmail = session.getAttribute("email").toString();
+    List<Message> messages = getMessagesForUser(userEmail);
+%>
+
+<% for (Message msg : messages) { %>
+    <div>
+        <p><b>From:</b> <%= msg.getFromEmail() %></p>
+        <p><b>Message:</b> <%= msg.getMessage() %></p>
+        
+        <form action="replyMessage" method="post">
+            <input type="hidden" name="toEmail" value="<%= msg.getFromEmail() %>">
+            <textarea name="message" required></textarea>
+            <button type="submit">Reply</button>
+        </form>
+    </div>
+<% } %>
+
+
+
+
+
+
+</body>
+</html>

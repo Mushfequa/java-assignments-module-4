@@ -1,0 +1,30 @@
+package com;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+@WebServlet("/sendMessage")
+
+public class LogoutServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String fromEmail = request.getSession().getAttribute("email").toString();
+        String toEmail = request.getParameter("toEmail");
+        String message = request.getParameter("message");
+        
+        saveMessage(fromEmail, toEmail, message);
+        
+        response.getWriter().write("Message sent successfully.");
+    }
+
+    private void saveMessage(String fromEmail, String toEmail, String message) {
+        // DB logic for saving messages
+    }
+}

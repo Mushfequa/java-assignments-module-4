@@ -1,0 +1,183 @@
+package Controller;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import Util.AppUtil;
+import bean.Student;
+import dao.StudentDao;
+
+@WebServlet("/student")
+public class StudentController extends HttpServlet {
+
+    private StudentDao studentDao;
+
+    @Override
+    public void init() {
+        studentDao = new StudentDao();
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        try {
+            switch (action) {
+                case "insert":
+                    insertStudent(request, response);
+                    break;
+                case "update":
+                    updateStudent(request, response);
+                    break;
+                case "delete":
+                    deleteStudent(request, response);
+                    break;
+                default:
+                    response.sendRedirect("index.jsp");
+                    break;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    protected void doFilter(HttpServletRequest req,HttpServletResponse resp,FilterChain chain)
+	{
+		String fname =req.getParameter("fname");
+		String lname =req.getParameter("lname");
+        String email =req.getParameter("email");
+		String contact =req.getParameter("contact");
+		String password =req.getParameter("password");
+		
+try {
+			
+			RequestDispatcher dispatcher = req.getRequestDispatcher("register.jsp");
+			
+			if(fname == null || fname.isBlank()) {
+				// navigate to register.jsp with error
+				req.setAttribute("fnameError", "Student name required");
+				dispatcher.forward(req, resp);
+				return;
+				
+			}
+			
+			if(lname == null || lname.isBlank()) {
+				// navigate to register.jsp with error
+				req.setAttribute("lnameError", "Student name required");
+				dispatcher.forward(req, resp);
+				return;
+				
+			}
+
+			if(email == null || email.isBlank()) {
+				// navigate to register.jsp with error
+				req.setAttribute("emailError", "Email is required");
+				dispatcher.forward(req, resp);
+				return;
+			}
+			
+			  if(!AppUtil.isValidEmail(email)) {
+	            	 
+	            	 //navigate to register.jsp with error
+	            	 
+	            	 req.setAttribute("emailError", " Invalid email address");
+	 				dispatcher.forward(req, resp);
+	 				return;
+	 			
+	             }
+	             
+	             
+	             
+	             if(contact == null || contact.isBlank()) {
+	 				
+	 				//navigate to register.jsp with error
+	 				
+	 				req.setAttribute("contactError", "Invalid contact number");
+	 				dispatcher.forward(req, resp);
+	 				return;
+	 				
+	             }
+	             
+	             if(password == null|| password.isBlank()) {
+	            	 
+	            	 //navigate to register.jsp with error
+	            	 req.setAttribute("passwordError", "password is required");
+	            	 dispatcher.forward(req, resp);
+	            	 return;
+	            	 
+	             }
+	             
+	             if(!AppUtil.isValidPassword(password)) {
+	            	 //navigate to register.jsp with error
+	            	 req.setAttribute("passwordError", "Invalid password ");
+	            	 dispatcher.forward(req, resp);
+	            	 return;
+	            	 
+	             }
+	 				//navigate to servlet
+	 	
+			
+				chain.doFilter(req, resp);
+
+			
+					}catch (Exception e) {
+				e.printStackTrace();
+				 
+			
+	
+}
+	}
+    private void insertStudent(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String fname = request.getParameter("fname");
+        String lname = request.getParameter("lname");
+        String email = request.getParameter("email");
+        String contact = request.getParameter("contact");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password");
+
+        Student student = new Student();
+        student.setFname(fname);
+        student.setLname(lname);
+        student.setEmail(email);
+        student.setContact(contact);
+        student.setGender(gender);
+        student.setPassword(password);
+
+        studentDao.insertStudent(student);
+        response.sendRedirect("index.jsp");
+    }
+
+    private void updateStudent(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String fname = request.getParameter("fname");
+        String lname = request.getParameter("lname");
+        String email = request.getParameter("email");
+        String contact = request.getParameter("contact");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password");
+
+        Student student = new Student();
+        student.setId(id);
+        student.setFname(fname);
+        student.setLname(lname);
+        student.setEmail(email);
+        student.setContact(contact);
+        student.setGender(gender);
+        student.setPassword(password);
+
+        studentDao.updateStudent(student);
+        response.sendRedirect("index.jsp");
+    }
+
+    private void deleteStudent(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        studentDao.deleteStudent(id);
+        response.sendRedirect("index.jsp");
+    }
+}

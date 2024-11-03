@@ -1,0 +1,11 @@
+127.0.0.1 - - [22/Oct/2024:21:14:44 +0530] "GET / HTTP/1.1" 404 752
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:14:46 +0530] "GET /EmailSenderAndOtpValidation/register.jsp HTTP/1.1" 200 1448
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:14:46 +0530] "GET /favicon.ico HTTP/1.1" 404 763
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:15:24 +0530] "GET /EmailSenderAndOtpValidation/register.jsp HTTP/1.1" 200 1456
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:15:59 +0530] "GET /EmailSenderAndOtpValidation/register.jsp HTTP/1.1" 200 1468
+127.0.0.1 - - [22/Oct/2024:21:27:13 +0530] "GET / HTTP/1.1" 404 752
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:27:20 +0530] "GET /EmailSenderAndOtpValidation/sendMessage.jsp HTTP/1.1" 200 370
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:27:34 +0530] "POST /EmailSenderAndOtpValidation/sendMessage HTTP/1.1" 404 795
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:28:03 +0530] "GET /EmailSenderAndOtpValidation/otpVerification.jsp HTTP/1.1" 200 293
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:28:41 +0530] "GET /EmailSenderAndOtpValidation/editProfile.jsp HTTP/1.1" 200 472
+0:0:0:0:0:0:0:1 - - [22/Oct/2024:21:28:58 +0530] "GET /EmailSenderAndOtpValidation/editProfile.jsp HTTP/1.1" 200 476

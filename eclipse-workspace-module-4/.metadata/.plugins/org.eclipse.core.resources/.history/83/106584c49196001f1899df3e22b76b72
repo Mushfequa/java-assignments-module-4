@@ -1,0 +1,43 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.List, your.package.Message" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Inbox</title>
+</head>
+<body>
+    <h2>Your Messages</h2>
+    <table border="1">
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Content</th>
+            <th>Date</th>
+        </tr>
+        <%
+            // Retrieve the messages list from the request attribute
+            List<Message> messages = (List<Message>) request.getAttribute("messages");
+            if (messages != null && !messages.isEmpty()) {
+                for (Message message : messages) {
+        %>
+        <tr>
+            <td><%= message.getFromEmail() %></td>
+            <td><%= message.getToEmail() %></td>
+            <td><%= message.getContent() %></td>
+            <td><%= message.getDate() %></td> <!-- Add a getDate() method in the Message class if needed -->
+        </tr>
+        <%
+                }
+            } else {
+        %>
+        <tr>
+            <td colspan="4">No messages found.</td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+</body>
+</html>
